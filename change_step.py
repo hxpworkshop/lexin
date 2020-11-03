@@ -4,8 +4,10 @@ import json
 import hashlib
 import time
 import datetime
-import easygui
-import win32api,win32con
+import wx
+import FrontFrame
+#import os
+
 
 class LexinSport:
     def __init__(self, username, password, step):
@@ -43,8 +45,8 @@ class LexinSport:
             return '登录失败'
         else:
             url = 'https://sports.lifesense.com/sport_service/sport/sport/uploadMobileStepV2?systemType=2&version=4.6.7'
-            data = {'list': [{'DataSource': 2, 'active': 1, 'calories': int(self.step/4), 'dataSource': 2,
-                              'deviceId': 'M_NULL', 'distance': int(self.step/3), 'exerciseTime': 0, 'isUpload': 0,
+            data = {'list': [{'DataSource': 2, 'active': 1, 'calories': int(self.step / 4), 'dataSource': 2,
+                              'deviceId': 'M_NULL', 'distance': int(self.step / 3), 'exerciseTime': 0, 'isUpload': 0,
                               'measurementTime': time.strftime('%Y-%m-%d %H:%M:%S'), 'priority': 0, 'step': self.step,
                               'type': 2, 'updated': int(round(time.time() * 1000)), 'userId': login_result[0]}]}
             headers = {
@@ -75,20 +77,21 @@ def get_sleep_time():
     return tomorrow_run_time - current_time
 
 
-if __name__ == "__main__":
-    # 最大运行出错次数
-    fail_num = 3
-    while 1:
+
+class TrytoModify:
+    def __init__(self, username, password, step):
+        self.username = username
+        self.password = password
+        self.step = step
+
+    def modify(self):
+        # 最大运行出错次数
+        fail_num = 3
+        #while 1:
         while fail_num > 0:
             try:
                 # 修改步数结果
-                # pywin32弹窗
-                # win32api.MessageBox(0, "这是一个测试提醒OK消息框", "提醒", win32con.MB_OK)
-
-                username = easygui.enterbox("请输入你的用户名")
-                password = easygui.enterbox("请输入你的密码")
-                #easygui.msgbox(sText)
-                result = LexinSport('15625101630', '709161912', 1000).change_step()
+                result = LexinSport(self.username, self.password, self.step).change_step()
                 print(result)
                 break
             except Exception as e:
@@ -96,8 +99,32 @@ if __name__ == "__main__":
                 fail_num -= 1
                 if fail_num == 0:
                     print('修改步数失败')
+                    #frame.m_staticText4.('修改步数失败')
         # 重置运行出错次数
         fail_num = 3
-        # 获取睡眠时间
-        sleep_time = get_sleep_time()
-        time.sleep(sleep_time)
+            # 获取睡眠时间
+            #sleep_time = get_sleep_time()
+            #time.sleep(sleep_time)
+
+
+class FrFrame(FrontFrame.MyFrame2):
+    def __init__(self, parent):
+        FrontFrame.MyFrame2.__init__(self, parent)
+
+    def submit(self, event):
+        user = self.m_textCtrl1.GetValue()
+        #user = int(user)
+        code = self.m_textCtrl2.GetValue()
+        step = self.m_textCtrl3.GetValue()
+        print(user, code, step)
+        TrytoModify(user, code, int(step)).modify()
+        # self.m_textCtrl1.SetValue(str(num * num))
+
+
+if __name__ == "__main__":
+    app = wx.App(False)
+    frame = FrFrame(None)
+    frame.Show(True)
+    app.MainLoop()
+    #os.system("pause")
+
