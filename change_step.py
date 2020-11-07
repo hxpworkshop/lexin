@@ -79,10 +79,12 @@ def get_sleep_time():
 
 
 class TrytoModify:
-    def __init__(self, username, password, step):
+    def __init__(self, frame, username, password, step):
+        self.frame = frame
         self.username = username
         self.password = password
         self.step = step
+
 
     def modify(self):
         # 最大运行出错次数
@@ -93,12 +95,15 @@ class TrytoModify:
                 # 修改步数结果
                 result = LexinSport(self.username, self.password, self.step).change_step()
                 print(result)
+                self.frame.m_textCtrl4.SetValue(result)
                 break
             except Exception as e:
                 print('运行出错，原因：%s' % e)
+                self.frame.m_textCtrl4.SetValue('运行出错，原因：%s\n' % e)
                 fail_num -= 1
                 if fail_num == 0:
                     print('修改步数失败')
+                    self.frame.m_textCtrl4.AppendText('修改步数失败')
                     #frame.m_staticText4.('修改步数失败')
         # 重置运行出错次数
         fail_num = 3
@@ -116,8 +121,9 @@ class FrFrame(FrontFrame.MyFrame2):
         #user = int(user)
         code = self.m_textCtrl2.GetValue()
         step = self.m_textCtrl3.GetValue()
-        print(user, code, step)
-        TrytoModify(user, code, int(step)).modify()
+        #print(user, code, step)
+        TrytoModify(self, user, code, int(step)).modify()
+
         # self.m_textCtrl1.SetValue(str(num * num))
 
 
