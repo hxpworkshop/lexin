@@ -6,7 +6,7 @@ import time
 import datetime
 import wx
 import FrontFrame
-#import os
+import sys
 
 
 class LexinSport:
@@ -128,6 +128,7 @@ class FrFrame(FrontFrame.MyFrame2):
 
 
 if __name__ == "__main__":
+    sys.path.append('../');
     app = wx.App(False)
     frame = FrFrame(None)
     frame.Show(True)
